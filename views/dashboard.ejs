@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 120px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        
+        .dropdown-content a {
+            color: black;
+            padding: 12px;
+            right: 5px;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .dropdown-content a:hover {
+            background-color: #a08674;
+            color: white;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        .user-image {
+            display: inline-block;
+            cursor: pointer;
+            margin-right: 25px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('navbar') %>
+    <div class="dropdown" style="float: right;">
+        <img src="/images/user-image.jpg" alt="User" class="user-image" width="50" height="50">
+        <div class="dropdown-content">
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

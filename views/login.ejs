@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .slide-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .slide-buttons button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .slide-buttons button:hover {
+            background-color: #ccc;
+        }
+
+        .slide-buttons button.active {
+            background-color: #6f5045;
+            color: white;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            width: 600px;
+        }
+
+        .left-block {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loginform {
+            width: 80%;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f2f2f2;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: none; 
+        }
+
+        .loginform.active {
+            display: block; 
+        }
+
+        .loginform h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .loginform input[type="text"],
+        .loginform input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .loginform button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #6f5045;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .loginform button:hover {
+            background-color: #a08674;
+        }
+
+        .right-block {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #6f5045;
+            color: white;
+        }
+
+        .right-block h2 {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('navbar') %>
+    <div class="main">
+        <div class="slide-buttons">
+            <button id="donorBtn" class="active" onclick="showDonorLogin()">Donor</button>
+            <button id="organisationBtn" onclick="showOrganisationLogin()">Organisation</button>
+        </div>
+        <div class="login-container">
+            <div class="left-block">
+                <div class="loginform" id="donorLoginForm">
+                    <h2>Donor Login</h2>
+                    <form action="/donorlogin" method="post">
+                        <% if (usernamestatus) { %>
+                            <p style="color: red; padding-left: 60px;">incorrect username</p>
+                        <% } %>
+                        <% if (passwordstatus) { %>
+                            <p style="color: red; padding-left: 60px;">incorrect password</p>
+                        <% } %>
+                        <input type="text" name="username" placeholder="Username" required> <br><br>
+                        <input type="password" name="password" placeholder="Password" required> <br><br>
+                        <button type="submit">Login</button>
+                    </form>
+                    <p style="font-family: 'Book Antiqua', serif;">Don't have an account? <a href="/signup" style="color: #6f5045;">Signup</a></p>
+                </div>
+                <div class="loginform" id="organisationLoginForm">
+                    <h2>Organisation Login</h2>
+                    <form action="/orglogin" method="post">
+                        <input type="text" name="orgusername" placeholder="Organisation Username" required> <br><br>
+                        <input type="password" name="orgpassword" placeholder="Password" required> <br><br>
+                        <button type="submit">Login</button>
+                    </form>
+                    <p style="font-family: 'Book Antiqua', serif;">Don't have an account? <a href="/signup" style="color: #6f5045;">Signup</a></p>
+                </div>
+            </div>
+            <div class="right-block">
+                <img src="//images/feature2_white.png" alt="Hope Community" style="width: 80px; height: 100px;"><br>
+                <h2>Welcome!</h2>
+            </div>
+        </div>
+    </div>
+    <script>
+        function showDonorLogin() {
+            document.getElementById('donorBtn').classList.add('active');
+            document.getElementById('organisationBtn').classList.remove('active');
+            document.getElementById('donorLoginForm').classList.add('active');
+            document.getElementById('organisationLoginForm').classList.remove('active');
+        }
+
+        function showOrganisationLogin() {
+            document.getElementById('organisationBtn').classList.add('active');
+            document.getElementById('donorBtn').classList.remove('active');
+            document.getElementById('organisationLoginForm').classList.add('active');
+            document.getElementById('donorLoginForm').classList.remove('active');
+        }
+        showDonorLogin();
+    </script>
+</body>
+</html>
