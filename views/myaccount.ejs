@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+         .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative; 
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-image {
+            margin-right: 20px; 
+        }
+
+        .profile-image img {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%; 
+        }
+
+        .update-info {
+            background-color: #f9f9f9; 
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            z-index: 1; 
+        }
+
+        #editButton{
+            padding: 10px;
+            background-color: #6f5045;
+            color : white;
+            width: 80px;
+            cursor: pointer;
+            border: none;
+            border-radius: 20px;
+        }
+        .edit-form-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2; 
+        }
+
+        .edit-form {
+            display: none; 
+            position: fixed;
+            top: 50%;
+            width: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f2f2f2;
+            z-index: 3; 
+        }
+
+        .edit-form label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .edit-form input[type="text"],
+        .edit-form input[type="email"] {
+            width: 300px;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            display: block;
+        }
+
+        .edit-form input[type="submit"] {
+            background-color: #6f5045;
+            color: white;
+            font-weight: bold;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .edit-form input[type="submit"]:hover {
+            background-color: #a08674;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 4;
+        }
+    </style>
+</head>
+<body>
+    <%- include('navbar') %>
+    <div class="container">
+        <div class="profile-section">
+            <div class="profile-image">
+                <img src="images/user-image.jpg" alt="profile image" style="width: 250px; height: 250px;">
+            </div>
+            <div class="update-info">
+                <h2>User Information</h2>
+                <p><strong>Username</strong>: <%= userdata.username %></p>
+                <p><strong>Name</strong>: <%= userdata.name %></p>
+                <p><strong>Mobile</strong>: <%= userdata.mobile %></p>
+                <p><strong>Email</strong>: <%= userdata.email %></p>
+                <button id="editButton" onclick="toggleEditForm()">Edit</button>
+            </div>
+        </div>
+        <div class="edit-form-overlay" id="editFormOverlay"></div>
+        <div id="editForm" class="edit-form">
+            <button class="close-btn" onclick="toggleEditForm()">X</button>
+            <h2>Edit Information</h2>
+            <form action="/updatedonorinfo" method="POST">
+                <label for="editName">Name:</label>
+                <input type="text" id="editName" name="name" value="<%= userdata.name %>">
+                <label for="editMobile">Mobile:</label>
+                <input type="text" id="editMobile" name="mobile" value="<%= userdata.mobile %>">
+                <label for="editEmail">Email:</label>
+                <input type="email" id="editEmail" name="email" value="<%= userdata.email %>">
+                <input type="submit" value="Save">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleEditForm() {
+            var editFormOverlay = document.getElementById("editFormOverlay");
+            var editForm = document.getElementById("editForm");
+            if (editForm.style.display === "none" || editForm.style.display === "") {
+                editFormOverlay.style.display = "block";
+                editForm.style.display = "block";
+            } else {
+                editFormOverlay.style.display = "none";
+                editForm.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

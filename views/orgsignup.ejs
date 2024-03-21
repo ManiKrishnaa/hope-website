@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 1100px;
+    }
+
+    .signup-container {
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        width: 600px; 
+    }
+
+    .left-block {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .signupform {
+        width: 80%;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #f2f2f2;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .signupform h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .signupform input[type="text"],
+    .signupform input[type="tel"],
+    .signupform input[type="password"], 
+    .signupform input[type="email"],
+    .signupform input[type="number"]{
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .signupform button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #6f5045;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .signupform button:hover {
+        background-color: #a08674;
+    }
+
+    .password-toggle {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .password-toggle img {
+        position: absolute;
+        right: 0px;
+        top: 40%;
+        transform: translateY(-50%);
+        width: 30px;
+        height: 20px;
+        cursor: pointer;
+    }
+    </style>
+</head>
+<%- include('navbar') %>
+<div class="main">
+    <div class="signup-container">
+        <div class="left-block">
+            <div class="signupform">
+                <h2>Organisation Sign Up</h2>
+                <form action="/orgsignup" method="post" name="signup" onsubmit="return validateForm()">
+                    <% if(something) {%>
+                        <p style="color: red;">Something went wrong ! try again</p>
+                    <% } %>
+                    <% if(usernamestatus) {%>
+                        <p style="color: red;">username already taken !</p>
+                    <% } %>
+                    <% if(mobilestatus) {%>
+                        <p style="color: red;">mobile number already taken !</p>
+                    <% } %>
+                    <% if(emailstatus) {%>
+                        <p style="color: red;">email already taken !</p>
+                    <% } %>
+                    <input type="text" name="orgname" placeholder="organisation Name" required> <br><br>
+                    <input type="number" name="orgstrength" placeholder="Organisation Strength" required><br><br>
+                    <input type="tel" name="orgmobile" placeholder="Organisation Mobile" required><br><br>
+                    <input type="email" name="orgemail" placeholder="Email" required> <br><br>
+                    <input type="number" name="orgmale" placeholder="No of Males in the organisation" required> <br><br>
+                    <input type="number" name="orgfemale" placeholder="No of Females in the organisation " required> <br><br>
+                    <input type="number" name="orgchildren" placeholder="No of Children in the organisation" required> <br><br>
+                    <input type="hidden" name="role" value="org"><br><br>
+                    <textarea name="address" placeholder="Address" rows="7" cols="60" required></textarea>
+                    <input type="text" name="username" placeholder="username" required> <br><br>
+                    <div class="password-toggle">
+                        <input type="password" name="password" id="password" placeholder="Password" required>
+                        <img src="images/eye-icon-cross.png" onclick="togglePasswordVisibility('password')" alt="Toggle Password">
+                    </div>
+                    <br>
+                    <div class="password-toggle">
+                        <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
+                        <img src="images/eye-icon-cross.png" onclick="togglePasswordVisibility('confirm_password')" alt="Toggle Password">
+                    </div>
+                    <br>
+                    <button type="submit">sign up</button>
+                </form>
+                <p style="font-family: 'Book Antiqua',serif;">Already have an account? <a href="/orglogin" style="color: #6f5045;">Login</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validateForm() {
+        var password = document.forms["signup"]["password"].value;
+        var confirm_password = document.forms["signup"]["confirm_password"].value;
+
+        if (password != confirm_password) {
+            alert("Password and confirm password do not match");
+            return false;
+        }
+        return true;
+    }
+    function togglePasswordVisibility(fieldId) {
+        var passwordField = document.getElementById(fieldId);
+        var icon = passwordField.parentNode.querySelector("img");
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.src = "images/eye-icon.png";
+        } else {
+            passwordField.type = "password";
+            icon.src = "images/eye-icon-cross.png";
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 500px;
+    }
+
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        width: 600px; 
+    }
+
+    .left-block {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loginform {
+        width: 50%;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #f2f2f2;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border: 3px solid #6f5045;
+    }
+
+    .loginform h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .loginform input[type="text"],
+    .loginform input[type="password"] {
+        width: 280px;
+        height: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .loginform button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #6f5045;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .loginform button:hover {
+        background-color: #a08674;
+    }
+
+    .password-toggle {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .password-toggle img {
+        position: absolute;
+        right: 0px;
+        top: 40%;
+        transform: translateY(-50%);
+        width: 30px;
+        height: 20px;
+        cursor: pointer;
+    }
+    </style>
+</head>
+<%- include('navbar') %>
+<div class="main">
+    <div class="login-container">
+        <div class="left-block">
+            <div class="loginform">
+                <h2>Donor Login</h2>
+                <form action="/donorlogin" method="post" name="login" onsubmit="return validateForm()">
+                    <% if(signupstatus) { %>
+                        <p style="color: green;">Donor Signup successfull !</p>
+                    <% } %>
+                    <% if(usernamestatus) { %>
+                        <p style="color: red;">User Not found ! sign up first</p>
+                    <% } %>
+                    <% if(creditinalsstatus) { %>
+                        <p style="color: red;">Invalid creditinals !</p>
+                    <% } %>
+                    <% if(something) { %>
+                        <p style="color: red;">something went wrong try again !</p>
+                    <% } %>
+                    <input type="text" name="username" placeholder="Username" required> <br><br>
+                    <div class="password-toggle">
+                        <input type="password" name="password" id="password" placeholder="Password" required>
+                        <img src="images/eye-icon-cross.png" onclick="togglePasswordVisibility('password')" alt="Toggle Password">
+                    </div>
+                    <br>
+                    <button type="submit">Login</button>
+                </form>
+                <p style="font-family: 'Book Antiqua',serif;">Don't have an account? <a href="/donorsignup" style="color: #6f5045;">Sign Up</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePasswordVisibility(fieldId) {
+        var passwordField = document.getElementById(fieldId);
+        var icon = passwordField.parentNode.querySelector("img");
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.src = "images/eye-icon.png";
+        } else {
+            passwordField.type = "password";
+            icon.src = "images/eye-icon-cross.png";
+        }
+    }
+</script>
+</body>
+</html>
