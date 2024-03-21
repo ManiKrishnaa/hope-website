@@ -34,7 +34,7 @@ mongoose.connect('mongodb://localhost:27017/hope')
     });
 
 app.get('/', (req, res) => {
-    res.render('home', { isLoggedIn: req.session.isLoggedIn });
+    res.render('home', { isLoggedin: req.session.isLoggedIn });
 });
 
 app.get('/home', (req, res) => {
@@ -50,7 +50,7 @@ app.get('/contact', (req, res) => {
 });
 
 app.get('/donorsignup', (req, res) => {
-    res.render('donorsignup', { isLoggedIn: req.session.isLoggedIn, usernamestatus: false, mobilestatus: false, emailstatus: false, something: false });
+    res.render('donorsignup', { isLoggedin: req.session.isLoggedIn, usernamestatus: false, mobilestatus: false, emailstatus: false, something: false });
 });
 
 app.post('/donorsignup', async (req, res) => {
@@ -61,27 +61,27 @@ app.post('/donorsignup', async (req, res) => {
         let check_mobile = await donormodel.findOne({ donormobile });
 
         if (check_mobile) {
-            return res.render("donorsignup", { usernamestatus: false, mobilestatus: true, emailstatus: false, something: false });
+            return res.render("donorsignup", {isLoggedin: req.session.isLoggedIn, usernamestatus: false, mobilestatus: true, emailstatus: false, something: false });
         }
         if (check_email) {
-            return res.render("donorsignup", { emailstatus: true, mobilestatus: false, usernamestatus: false, something: false });
+            return res.render("donorsignup", { isLoggedin: req.session.isLoggedIn,emailstatus: true, mobilestatus: false, usernamestatus: false, something: false });
         }
         if (check_username) {
-            return res.render("donorsignup", { mobilestatus: false, emailstatus: false, usernamestatus: true, something: false });
+            return res.render("donorsignup", {isLoggedin: req.session.isLoggedIn, mobilestatus: false, emailstatus: false, usernamestatus: true, something: false });
         }
 
         const hashed_password = await bcrypt.hash(password, 12);
         const newdonor = new donormodel({ name: donorname, mobile: donormobile, email: donoremail, username: username, password: hashed_password, role: role });
         await newdonor.save();
-        res.render('donorlogin',{signupstatus : true,something : false,usernamestatus : false,creditinalsstatus : false});
+        res.render('donorlogin',{isLoggedin: req.session.isLoggedIn,signupstatus : true,something : false,usernamestatus : false,creditinalsstatus : false});
     } catch (error) {
         console.error(error);
-        return res.render("donorsignup",{something : true,emailstatus : false,usernamestatus : false,mobilestatus: false});
+        return res.render("donorsignup",{isLoggedin: req.session.isLoggedIn,something : true,emailstatus : false,usernamestatus : false,mobilestatus: false});
     }
 });
 
 app.get('/orgsignup', (req, res) => {
-    res.render('orgsignup', { isLoggedIn: req.session.isLoggedIn, something: false, emailstatus: false, mobilestatus: false, usernamestatus: false });
+    res.render('orgsignup', { isLoggedin: req.session.isLoggedIn, something: false, emailstatus: false, mobilestatus: false, usernamestatus: false });
 });
 
 app.post('/orgsignup', async (req, res) => {
@@ -92,27 +92,27 @@ app.post('/orgsignup', async (req, res) => {
         let check_mobile = await orgmodel.findOne({ orgmobile });
 
         if (check_mobile) {
-            return res.render("orgsignup", { usernamestatus: false, mobilestatus: true, emailstatus: false, something: false });
+            return res.render("orgsignup", {isLoggedin: req.session.isLoggedIn, usernamestatus: false, mobilestatus: true, emailstatus: false, something: false });
         }
         if (check_email) {
-            return res.render("orgsignup", { emailstatus: true, mobilestatus: false, usernamestatus: false, something: false });
+            return res.render("orgsignup", { isLoggedin: req.session.isLoggedIn,emailstatus: true, mobilestatus: false, usernamestatus: false, something: false });
         }
         if (check_username) {
-            return res.render("orgsignup", { mobilestatus: false, emailstatus: false, usernamestatus: true, something: false });
+            return res.render("orgsignup", { isLoggedin: req.session.isLoggedIn,mobilestatus: false, emailstatus: false, usernamestatus: true, something: false });
         }
 
         const hashed_password = await bcrypt.hash(password, 12);
         const neworg = new orgmodel({ name: orgname, strength: orgstrength, mobile: orgmobile, email: orgemail, males: orgmale, females: orgfemale, childrens: orgchildren, address: address, username: username, password: hashed_password, role: role });
         await neworg.save();
-        res.render("orglogin",{signupstatus : true,something : false,usernamestatus : false,creditinalsstatus : false})
+        res.render("orglogin",{isLoggedin: req.session.isLoggedIn,signupstatus : true,something : false,usernamestatus : false,creditinalsstatus : false})
     } catch (error) {
         console.error(error);
-        return res.render("orgsignup", { something: true, emailstatus: false, mobilestatus: false, usernamestatus: false });
+        return res.render("orgsignup", { isLoggedin: req.session.isLoggedIn,something: true, emailstatus: false, mobilestatus: false, usernamestatus: false });
     }
 });
 
 app.get('/donorlogin', (req, res) => {
-    res.render('donorlogin', { isLoggedIn: req.session.isLoggedIn, signupstatus: false, something: false, usernamestatus: false, creditinalsstatus: false });
+    res.render('donorlogin', { isLoggedin: req.session.isLoggedIn, signupstatus: false, something: false, usernamestatus: false, creditinalsstatus: false });
 });
 
 app.post('/donorlogin', async (req, res) => {
@@ -121,21 +121,23 @@ app.post('/donorlogin', async (req, res) => {
         let check_username = await donormodel.findOne({username});
         if(!check_username)
         {
-            res.render("donorlogin",{usernamestatus : true,something : false,signupstatus : false,creditinalsstatus : false});   
+            res.render("donorlogin",{isLoggedin: req.session.isLoggedIn,usernamestatus : true,something : false,signupstatus : false,creditinalsstatus : false});   
         }
         let ismatch = bcrypt.compare(password,check_username.password);
         if(!ismatch) 
         {
-            res.render("donorlogin",{creditinalsstatus : true,something : false,usernamestatus : false,signupstatus : false});
+            res.render("donorlogin",{isLoggedin: req.session.isLoggedIn,creditinalsstatus : true,something : false,usernamestatus : false,signupstatus : false});
         }
-        res.send("login succesfull !");
+        req.session.isLoggedIn = true; 
+        req.session.username = check_username.username;
+        res.redirect('/'); 
     }catch(error){
-        return res.render("donorlogin",{something : true,signupstatus : false,usernamestatus : false,creditinalsstatus : false});
+        return res.render("donorlogin",{isLoggedin: req.session.isLoggedIn,something : true,signupstatus : false,usernamestatus : false,creditinalsstatus : false});
     }
 });
 
 app.get('/orglogin', (req, res) => {
-    res.render('orglogin', { isLoggedIn: req.session.isLoggedIn, signupstatus: false, something: false, usernamestatus: false, creditinalsstatus: false });
+    res.render('orglogin', { isLoggedin: req.session.isLoggedIn, signupstatus: false, something: false, usernamestatus: false, creditinalsstatus: false });
 });
 
 app.post('/orglogin', async (req, res) => {
@@ -144,22 +146,44 @@ app.post('/orglogin', async (req, res) => {
         let check_username = await orgmodel.findOne({username});
         if(!check_username)
         {
-            res.render("orglogin",{usernamestatus : true,something : false,signupstatus : false,creditinalsstatus : false});   
+            res.render("orglogin",{isLoggedin: req.session.isLoggedIn,usernamestatus : true,something : false,signupstatus : false,creditinalsstatus : false});   
         }
         let ismatch = bcrypt.compare(password,check_username.password);
         if(!ismatch)
         {
-            res.render("orglogin",{creditinalsstatus : true,something : false,usernamestatus : false,signupstatus : false});
+            res.render("orglogin",{isLoggedin: req.session.isLoggedIn,creditinalsstatus : true,something : false,usernamestatus : false,signupstatus : false});
         }
-        res.send("login succesfull !");
+        req.session.isLoggedIn = true;
+        res.redirect('/');
     }catch(error){
-        return res.render("orglogin",{something : true,signupstatus : false,usernamestatus : false,creditinalsstatus : false});
+        return res.render("orglogin",{isLoggedin: req.session.isLoggedIn,something : true,signupstatus : false,usernamestatus : false,creditinalsstatus : false});
     }
 });
 
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
+});
+
+app.get('/myaccount',async(req,res)=>{
+    const username = req.session.username;
+    const userdata = await donormodel.findOne({username});
+    res.render('myaccount',{isLoggedin : req.session.isLoggedIn,userdata : userdata});
+});
+
+app.post('/updatedonorinfo',async(req,res)=>{
+    const {username,name,mobile,email} = req.body;
+    let donor = await donormodel.findOne({ username });
+
+    if (donor) {
+        donor.name = name;
+        donor.mobile = mobile;
+        donor.email = email;
+
+        await donor.save();
+    }
+    const userdata = await donormodel.findOne({username});
+    res.render("myaccount",{isLoggedin : req.session.isLoggedIn,userdata : userdata});
 });
 
 app.listen(3000, () => {
