@@ -132,6 +132,7 @@
             <button class="close-btn" onclick="toggleEditForm()">X</button>
             <h2>Edit Information</h2>
             <form action="/updatedonorinfo" method="POST">
+                <input type="hidden" name="username" value="<%= userdata.username %>">
                 <label for="editName">Name:</label>
                 <input type="text" id="editName" name="name" value="<%= userdata.name %>">
                 <label for="editMobile">Mobile:</label>
