@@ -8,13 +8,22 @@ const donormodel = require('./models/donorschema');
 const orgmodel = require('./models/orgschema');
 
 const app = express();
+const dbURI = 'mongodb://localhost:27017/';
 
 app.set('view engine', 'ejs');
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
+mongoose.connect(dbURI)
+.then(() => {
+    console.log("MongoDB connected!");
+})
+.catch((err) => {
+    console.error("Error connecting to MongoDB:", err);
+});
+
 const store = new mongodbsession({
-    uri: 'mongodb://localhost:27017/hope',
+    uri: dbURI,
     session: 'mysessions'
 });
 
@@ -24,14 +33,6 @@ app.use(session({
     saveUninitialized: false,
     store: store
 }));
-
-mongoose.connect('mongodb://localhost:27017/hope')
-    .then(() => {
-        console.log("MongoDB connected!");
-    })
-    .catch((err) => {
-        console.error("Error connecting to MongoDB:", err);
-    });
 
 app.get('/', (req, res) => {
     res.render('home', { isLoggedin: req.session.isLoggedIn });
@@ -154,6 +155,7 @@ app.post('/orglogin', async (req, res) => {
             res.render("orglogin",{isLoggedin: req.session.isLoggedIn,creditinalsstatus : true,something : false,usernamestatus : false,signupstatus : false});
         }
         req.session.isLoggedIn = true;
+        req.session.username = check_username.username;
         res.redirect('/');
     }catch(error){
         return res.render("orglogin",{isLoggedin: req.session.isLoggedIn,something : true,signupstatus : false,usernamestatus : false,creditinalsstatus : false});
@@ -165,11 +167,29 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-app.get('/myaccount',async(req,res)=>{
-    const username = req.session.username;
-    const userdata = await donormodel.findOne({username});
-    res.render('myaccount',{isLoggedin : req.session.isLoggedIn,userdata : userdata});
+app.get('/myaccount', async (req, res) => {
+    try{
+        const username = req.session.username;
+        let userdata;
+        const donorData = await donormodel.findOne({ username });
+
+        if (donorData) {
+            userdata = donorData;
+        } else {
+            const orgData = await orgmodel.findOne({ username });
+            userdata = orgData;
+        }
+        let role = userdata.role;
+        res.render('myaccount', { isLoggedin: req.session.isLoggedIn, userdata: userdata ,role : role});
+    }catch(error){
+        if(req.session.isLoggedIn){
+            res.render('myaccount', { isLoggedin: req.session.isLoggedIn, userdata: userdata ,role : null });
+        }else{
+            res.redirect('/');
+        }
+    }
 });
+
 
 app.post('/updatedonorinfo',async(req,res)=>{
     const {username,name,mobile,email} = req.body;
@@ -183,6 +203,26 @@ app.post('/updatedonorinfo',async(req,res)=>{
         await donor.save();
     }
     const userdata = await donormodel.findOne({username});
+    res.render("myaccount",{isLoggedin : req.session.isLoggedIn,userdata : userdata});
+});
+
+app.post('/updateorginfo',async(req,res)=>{
+    const {username,name,mobile,email,strength,males,females,childrens,address} = req.body;
+    let org = await orgmodel.findOne({ username });
+
+    if (org) {
+        org.name = name;
+        org.mobile = mobile;
+        org.email = email;
+        org.strength = strength;
+        org.males = males;
+        org.females = females;
+        org.childrens = childrens;
+        org.address = address;
+
+        await org.save();
+    }
+    const userdata = await orgmodel.findOne({username});
     res.render("myaccount",{isLoggedin : req.session.isLoggedIn,userdata : userdata});
 });
 
