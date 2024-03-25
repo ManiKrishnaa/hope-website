@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Dashboard</title>
+    <style>
+        /* Button style */
+        .management-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #6f5045;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .management-button:hover {
+            background-color: #8b6c5c;
+        }
+
+        .new-inventory-form {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .new-inventory-form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .new-inventory-form input[type="text"],
+        .new-inventory-form input[type="number"] {
+            width: 15%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .new-inventory-form button[type="submit"] {
+            background-color: #6f5045;
+            color: white;
+            font-weight: bold;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .new-inventory-form button[type="submit"]:hover {
+            background-color: #a08674;
+        }
+        /* Update button style */
+        .update-button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .update-button:hover {
+            background-color: #45a049;
+        }
+
+        /* Overlay style */
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            z-index: 9999; /* Ensure the overlay is above other content */
+            display: none; /* Hide by default */
+        }
+
+        /* Update inventory form style */
+        .update-inventory-form {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+    </style>
+</head>
+<body>
+    <%-  include('navbar') %>
+    
+    <div class="container">
+        <a href="#" class="management-button" onclick="toggleSection('inventory')">Inventory Management</a>
+        <!-- Button for Donation Tracking System -->
+        <a href="#" class="management-button" onclick="toggleSection('donation')">Donation Tracking System</a>
+        <!-- Button for Child Fund Management -->
+        <a href="#" class="management-button" onclick="toggleSection('child')">Child Fund Management</a>
+        
+        <!-- Inventory Management Section -->
+        <div id="inventorySection" class="management-section" style="display: none;">
+            <h2>Inventory Management</h2>
+            <% if (inventorydata && inventorydata.length > 0) { %>
+                <ul>
+                    <% inventorydata.forEach(function(item) { %>
+                        <li>
+                            <p>Item Name: <%= item.itemname %></p>
+                            <p>Stock Level: <%= item.itemlevel %></p>
+                            <!-- Update button -->
+                            <button onclick="displayUpdateForm('<%= item._id %>', '<%= item.itemname %>', '<%= item.itemlevel %>')">Update</button>
+                            <!-- Remove button -->
+                            <button onclick="removeInventory('<%= item._id %>')">Remove</button>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No inventory data available</p>
+            <% } %>
+            <button onclick="toggleNewInventoryForm()">Add New Inventory</button>
+            <div id="newInventoryForm" class="new-inventory-form">
+                <h3>Add New Inventory Item</h3>
+                <form id="addItemForm" method="post" action="/additem">
+                    <input type="text" id="itemname" name="itemname" placeholder="Item name" required><br>
+                    <input type="text" id="itemlevel" name="itemlevel" placeholder="Stock level" required><br>
+                    <button type="submit">Add Item</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Update Inventory Form Overlay -->
+        <div id="updateInventoryOverlay" class="overlay">
+            <div class="update-inventory-form">
+                <h3>Update Inventory Item</h3>
+                <form id="updateItemForm" method="post" action="/updateitem">
+                    <input type="hidden" id="updateItemId" name="itemid">
+                    <label for="updateItemName">Item Name:</label> 
+                    <input type="text" id="updateItemName" name="itemname" required><br> 
+                    <label for="updateItemLevel">Stock Level:</label> 
+                    <input type="text" id="updateItemLevel" name="itemlevel" required><br> 
+                    <button type="submit">Update Item</button>
+                    <button type="button" onclick="closeUpdateForm()">Cancel</button>
+                </form>
+            </div>
+        </div>      
+        
+        <!-- Donation Tracking System Section -->
+        <div id="donationSection" class="management-section" style="display: none;">
+            <h2>Donation Tracking System</h2>
+            <!-- Add your content for Donation Tracking System here -->
+        </div>
+        
+        <!-- Child Fund Management Section -->
+        <div id="childSection" class="management-section" style="display: none;">
+            <h2>Child Fund Management</h2>
+            <!-- Add your content for Child Fund Management here -->
+        </div>
+    </div>
+    <script>
+        function toggleSection(section) {
+            var sections = document.querySelectorAll('.management-section');
+            sections.forEach(function(sec) {
+                if (sec.id === section + 'Section') {
+                    sec.style.display = 'block';
+                } else {
+                    sec.style.display = 'none';
+                }
+            });
+        }
+
+        function toggleNewInventoryForm() {
+            var form = document.getElementById('newInventoryForm');
+            form.style.display = form.style.display === 'block' ? 'none' : 'block';
+        }
+        function displayUpdateForm(itemId, itemName, itemLevel) {
+            var overlay = document.getElementById('updateInventoryOverlay');
+            var form = document.getElementById('updateItemForm');
+            var nameInput = document.getElementById('updateItemName');
+            var levelInput = document.getElementById('updateItemLevel');
+
+            // Populate form with existing values
+            document.getElementById('updateItemId').value = itemId;
+            nameInput.value = itemName;
+            levelInput.value = itemLevel;
+
+            overlay.style.display = 'block';
+        }
+
+        function closeUpdateForm() {
+            document.getElementById('updateInventoryOverlay').style.display = 'none';
+        }
+
+    </script>
+</body>
+</html>
