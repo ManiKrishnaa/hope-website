@@ -123,25 +123,32 @@
             </div>
             <% if(role == 'donor') { %>
                 <div class="update-info">
-                    <h2>User Information</h2>
-                    <p><strong>Username</strong>: <%= userdata.username %></p>
-                    <p><strong>Name</strong>: <%= userdata.name %></p>
-                    <p><strong>Mobile</strong>: <%= userdata.mobile %></p>
-                    <p><strong>Email</strong>: <%= userdata.email %></p>
+                    <p style="font-family: 'Book Antiqua',serif; font-size: 25px;  font-weight: bold;">User Information</p>
+                    <p style="font-family: 'Book Antiqua',serif; font-size: 15px;"><strong>Username</strong>: <%= userdata.username %></p>
+                    <p style="font-family: 'Book Antiqua',serif; font-size: 15px;"><strong>Name</strong>: <%= userdata.name %></p>
+                    <p style="font-family: 'Book Antiqua',serif; font-size: 15px;"><strong>Mobile</strong>: <%= userdata.mobile %></p>
+                    <p style="font-family: 'Book Antiqua',serif; font-size: 15px;"><strong>Email</strong>: <%= userdata.email %></p>
                     <button id="editButton" onclick="toggleEditForm()">Edit</button>
                 </div>
             <% }else { %>
-                <div class="update-info">
-                    <h2><%= userdata.name %></h2>
-                    <p><strong>Username</strong>: <%= userdata.username %></p>
-                    <p><strong>Mobile</strong>: <%= userdata.mobile %></p>
-                    <p><strong>Email</strong>: <%= userdata.email %></p>
-                    <p><strong>strength</strong>: <%= userdata.strength %></p>
-                    <p><strong>no of males in the organisation</strong>: <%= userdata.males %></p>
-                    <p><strong>no of females in the organisation</strong>: <%= userdata.females %></p>
-                    <p><strong>no of childrens in the organisation</strong>: <%= userdata.childrens %></p>
-                    <p><strong>address</strong>: <%= userdata.address %></p>
-                    <button id="editButton" onclick="toggleEditForm()">Edit</button>
+                <div class="update-info" style="display: flex; flex-wrap: wrap;">
+                    <div style="width: 33.33%; padding: 0 15px;">
+                        <p style="font-family: 'Book Antiqua', serif; font-size: 25px; font-weight: bold;"><%= userdata.name %></p>
+                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>Username</strong>: <%= userdata.username %></p>
+                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>Mobile</strong>: <%= userdata.mobile %></p>
+                    </div>
+                    <div style="width: 33.33%; padding: 0 15px;">
+                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>Email</strong>: <%= userdata.email %></p>
+                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>Strength</strong>: <%= userdata.strength %></p>
+                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>No of males</strong>: <%= userdata.males %></p>
+                    </div>
+                    <div style="width: 33.33%; padding: 0 15px;">
+                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>No of females</strong>: <%= userdata.females %></p>
+                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>No of childrens</strong>: <%= userdata.childrens %></p>
+                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>Address</strong>: <%= userdata.address %></p>
+                    </div>
+                </div>
+                <button id="editButton" onclick="toggleEditForm()">Edit</button>                
                 </div>
             <% } %>
         </div>
@@ -149,7 +156,7 @@
         <div id="editForm" class="edit-form">
             <button class="close-btn" onclick="toggleEditForm()">X</button>
             <h2>Edit Information</h2>
-            <% if(userdata.role == 'donor') { %>
+            <% if(role == 'donor') { %>
                 <form action="/updatedonorinfo" method="POST">
                     <input type="hidden" name="username" value="<%= userdata.username %>">
                     <label for="editName">Name:</label>
