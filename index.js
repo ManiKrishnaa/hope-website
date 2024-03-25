@@ -6,24 +6,16 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const donormodel = require('./models/donorschema');
 const orgmodel = require('./models/orgschema');
+const inventorymodel = require('./models/inventoryschema');
 
 const app = express();
-const dbURI = 'mongodb://localhost:27017/';
 
 app.set('view engine', 'ejs');
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-mongoose.connect(dbURI)
-.then(() => {
-    console.log("MongoDB connected!");
-})
-.catch((err) => {
-    console.error("Error connecting to MongoDB:", err);
-});
-
 const store = new mongodbsession({
-    uri: dbURI,
+    uri: 'mongodb://localhost:27017/hope',
     session: 'mysessions'
 });
 
@@ -33,6 +25,14 @@ app.use(session({
     saveUninitialized: false,
     store: store
 }));
+
+mongoose.connect('mongodb://localhost:27017/hope')
+    .then(() => {
+        console.log("MongoDB connected!");
+    })
+    .catch((err) => {
+        console.error("Error connecting to MongoDB:", err);
+    });
 
 app.get('/', (req, res) => {
     res.render('home', { isLoggedin: req.session.isLoggedIn });
@@ -168,27 +168,33 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/myaccount', async (req, res) => {
-    try{
+    try {
         const username = req.session.username;
-        let userdata;
-        const donorData = await donormodel.findOne({ username });
+        let userdata = null;
+        let role = null;
 
-        if (donorData) {
-            userdata = donorData;
-        } else {
-            const orgData = await orgmodel.findOne({ username });
-            userdata = orgData;
+        if (username) {
+            const donorData = await donormodel.findOne({ username });
+
+            if (donorData) {
+                userdata = donorData;
+                role = donorData.role;
+            } else {
+                const orgData = await orgmodel.findOne({ username });
+
+                if (orgData) {
+                    userdata = orgData;
+                    role = orgData.role;
+                }
+            }
         }
-        let role = userdata.role;
-        res.render('myaccount', { isLoggedin: req.session.isLoggedIn, userdata: userdata ,role : role});
-    }catch(error){
-        if(req.session.isLoggedIn){
-            res.render('myaccount', { isLoggedin: req.session.isLoggedIn, userdata: userdata ,role : null });
-        }else{
-            res.redirect('/');
-        }
+        res.render('myaccount', { isLoggedin: req.session.isLoggedIn, userdata: userdata, role: role });
+    } catch (error) {
+        console.error(error);
+        res.redirect('/');
     }
 });
+
 
 
 app.post('/updatedonorinfo',async(req,res)=>{
@@ -203,7 +209,8 @@ app.post('/updatedonorinfo',async(req,res)=>{
         await donor.save();
     }
     const userdata = await donormodel.findOne({username});
-    res.render("myaccount",{isLoggedin : req.session.isLoggedIn,userdata : userdata});
+    let role = userdata.role;
+    res.render("myaccount",{isLoggedin : req.session.isLoggedIn,role : role});
 });
 
 app.post('/updateorginfo',async(req,res)=>{
@@ -223,8 +230,34 @@ app.post('/updateorginfo',async(req,res)=>{
         await org.save();
     }
     const userdata = await orgmodel.findOne({username});
-    res.render("myaccount",{isLoggedin : req.session.isLoggedIn,userdata : userdata});
+    let role = userdata.role;
+    res.render("myaccount",{isLoggedin : req.session.isLoggedIn,role : role,userdata : userdata});
 });
+
+app.get('/dashboard',async(req,res)=>{
+    const inventorydata = await orgmodel.find();
+    res.render("orgdashboard",{isLoggedin : req.session.isLoggedIn,inventorydata : inventorydata,erroradding : false});
+})
+
+app.post('/additem',async(req,res)=>{
+    try {
+        const { itemname, itemlevel } = req.body;
+        const newItem = new inventorymodel({
+            itemname: itemname,
+            itemlevel: itemlevel
+        });
+        const savedItem = await newItem.save();
+        const inventorydata = await inventorymodel.find();
+        res.render('orgdashboard',{isLoggedin : req.session.isLoggedIn,inventorydata : inventorydata,erroradding : false});
+    } catch (error) {
+        console.error('Error adding new inventory item:', error);
+        res.render('orgdashboard',{isLoggedin : req.session.isLoggedIn,inventorydata : inventorydata,erroradding : true});
+    }
+});
+
+app.post('/updateitem',async(req,res)=>{
+    
+})
 
 app.listen(3000, () => {
     console.log("Server connected!");
