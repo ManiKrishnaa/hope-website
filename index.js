@@ -127,7 +127,7 @@ app.post('/donorlogin', async (req, res) => {
         {
             res.render("donorlogin",{isLoggedin: req.session.isLoggedIn,usernamestatus : true,something : false,signupstatus : false,creditinalsstatus : false});   
         }
-        let ismatch = bcrypt.compare(password,check_username.password);
+        let ismatch = await bcrypt.compare(password,check_username.password);
         if(!ismatch) 
         {
             res.render("donorlogin",{isLoggedin: req.session.isLoggedIn,creditinalsstatus : true,something : false,usernamestatus : false,signupstatus : false});
@@ -152,7 +152,7 @@ app.post('/orglogin', async (req, res) => {
         {
             res.render("orglogin",{isLoggedin: req.session.isLoggedIn,usernamestatus : true,something : false,signupstatus : false,creditinalsstatus : false});   
         }
-        let ismatch = bcrypt.compare(password,check_username.password);
+        let ismatch = await bcrypt.compare(password,check_username.password);
         if(!ismatch)
         {
             res.render("orglogin",{isLoggedin: req.session.isLoggedIn,creditinalsstatus : true,something : false,usernamestatus : false,signupstatus : false});
