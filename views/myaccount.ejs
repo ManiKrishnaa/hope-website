@@ -4,46 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-         .container {
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            position: relative; 
+            padding: 20px;
+            margin-top: 50px;
         }
 
         .profile-section {
             display: flex;
             align-items: center;
-        }
-
-        .profile-image {
-            margin-right: 20px; 
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .profile-image img {
             width: 250px;
             height: 250px;
-            border-radius: 50%; 
+            border-radius: 50%;
+            border: 3px solid #6f5045;
+            margin-right: 20px;
         }
 
         .update-info {
-            background-color: #f9f9f9; 
+            background-color: #fff;
             padding: 20px;
             border-radius: 10px;
-            position: relative;
-            z-index: 1; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        #editButton{
-            padding: 10px;
+        .update-info p {
+            margin: 5px 0;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .update-info p strong {
+            font-weight: bold;
+            color: #6f5045;
+        }
+
+        #editButton {
+            padding: 10px 20px;
             background-color: #6f5045;
-            color : white;
-            width: 80px;
+            color: white;
             cursor: pointer;
             border: none;
             border-radius: 20px;
+            font-size: 16px;
+            transition: background-color 0.3s;
         }
+
+        #editButton:hover {
+            background-color: #523b30;
+        }
+
         .edit-form-overlay {
             display: none;
             position: fixed;
@@ -52,36 +78,47 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            z-index: 2; 
+            z-index: 2;
         }
 
         .edit-form {
-            display: none; 
+            display: none;
             position: fixed;
             top: 50%;
-            width: 20%;
             left: 50%;
             transform: translate(-50%, -50%);
+            width: 100%;
+            max-width: 500px;
             padding: 20px;
-            border: 1px solid #ccc;
             border-radius: 10px;
-            background-color: #f2f2f2;
-            z-index: 3; 
+            background-color: white;
+            z-index: 3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-form h2 {
+            margin-top: 0;
+            color: #6f5045;
+            font-size: 24px;
         }
 
         .edit-form label {
             font-weight: bold;
             margin-bottom: 5px;
             display: block;
+            color: #6f5045;
         }
 
         .edit-form input[type="text"],
-        .edit-form input[type="email"] {
-            width: 300px;
-            padding: 8px;
-            margin-bottom: 10px;
+        .edit-form input[type="email"],
+        .edit-form input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
             box-sizing: border-box;
-            display: block;
+            font-size: 16px;
         }
 
         .edit-form input[type="submit"] {
@@ -90,13 +127,14 @@
             font-weight: bold;
             padding: 12px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+            font-size: 16px;
         }
 
         .edit-form input[type="submit"]:hover {
-            background-color: #a08674;
+            background-color: #523b30;
         }
 
         .close-btn {
@@ -105,12 +143,9 @@
             right: 10px;
             background-color: transparent;
             border: none;
-            font-size: 18px;
+            font-size: 24px;
             cursor: pointer;
-            z-index: 4;
-        }
-        #editaddress{
-            height: 50px;
+            color: #6f5045;
         }
     </style>
 </head>
@@ -119,37 +154,36 @@
     <div class="container">
         <div class="profile-section">
             <div class="profile-image">
-                <img src="images/user-image.jpg" alt="profile image" style="width: 250px; height: 250px;">
+                <img src="images/user-image.jpg" alt="profile image">
             </div>
             <% if(role == 'donor') { %>
                 <div class="update-info">
-                    <p style="font-family: 'Book Antiqua',serif; font-size: 25px;  font-weight: bold;">User Information</p>
-                    <p style="font-family: 'Book Antiqua',serif; font-size: 15px;"><strong>Username</strong>: <%= userdata.username %></p>
-                    <p style="font-family: 'Book Antiqua',serif; font-size: 15px;"><strong>Name</strong>: <%= userdata.name %></p>
-                    <p style="font-family: 'Book Antiqua',serif; font-size: 15px;"><strong>Mobile</strong>: <%= userdata.mobile %></p>
-                    <p style="font-family: 'Book Antiqua',serif; font-size: 15px;"><strong>Email</strong>: <%= userdata.email %></p>
+                    <p style="font-size: 25px; font-weight: bold;">User Information</p>
+                    <p><strong>Username:</strong> <%= userdata.username %></p>
+                    <p><strong>Name:</strong> <%= userdata.name %></p>
+                    <p><strong>Mobile:</strong> <%= userdata.mobile %></p>
+                    <p><strong>Email:</strong> <%= userdata.email %></p>
                     <button id="editButton" onclick="toggleEditForm()">Edit</button>
                 </div>
-            <% }else { %>
+            <% } else { %>
                 <div class="update-info" style="display: flex; flex-wrap: wrap;">
                     <div style="width: 33.33%; padding: 0 15px;">
-                        <p style="font-family: 'Book Antiqua', serif; font-size: 25px; font-weight: bold;"><%= userdata.name %></p>
-                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>Username</strong>: <%= userdata.username %></p>
-                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>Mobile</strong>: <%= userdata.mobile %></p>
+                        <p style="font-size: 25px; font-weight: bold;"><%= userdata.name %></p>
+                        <p><strong>Username:</strong> <%= userdata.username %></p>
+                        <p><strong>Mobile:</strong> <%= userdata.mobile %></p>
                     </div>
                     <div style="width: 33.33%; padding: 0 15px;">
-                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>Email</strong>: <%= userdata.email %></p>
-                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>Strength</strong>: <%= userdata.strength %></p>
-                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>No of males</strong>: <%= userdata.males %></p>
+                        <p><strong>Email:</strong> <%= userdata.email %></p>
+                        <p><strong>Strength:</strong> <%= userdata.strength %></p>
+                        <p><strong>No of males:</strong> <%= userdata.males %></p>
                     </div>
                     <div style="width: 33.33%; padding: 0 15px;">
-                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>No of females</strong>: <%= userdata.females %></p>
-                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>No of childrens</strong>: <%= userdata.childrens %></p>
-                        <p style="font-family: 'Book Antiqua', serif; font-size: 15px;"><strong>Address</strong>: <%= userdata.address %></p>
+                        <p><strong>No of females:</strong> <%= userdata.females %></p>
+                        <p><strong>No of children:</strong> <%= userdata.childrens %></p>
+                        <p><strong>Address:</strong> <%= userdata.address %></p>
                     </div>
                 </div>
-                <button id="editButton" onclick="toggleEditForm()">Edit</button>                
-                </div>
+                <button id="editButton" onclick="toggleEditForm()">Edit</button>
             <% } %>
         </div>
         <div class="edit-form-overlay" id="editFormOverlay"></div>
@@ -167,7 +201,7 @@
                     <input type="email" id="editEmail" name="email" value="<%= userdata.email %>">
                     <input type="submit" value="Save">
                 </form>
-            <% }else{ %>
+            <% } else { %>
                 <form action="/updateorginfo" method="POST">
                     <input type="hidden" name="username" value="<%= userdata.username %>">
                     <label for="editName">Name:</label>
@@ -180,9 +214,9 @@
                     <input type="number" id="editstrength" name="strength" value="<%= userdata.strength %>">
                     <label for="editmales">No of males:</label>
                     <input type="number" id="editmales" name="males" value="<%= userdata.males %>">
-                    <label for="editfemales">No of Females:</label>
+                    <label for="editfemales">No of females:</label>
                     <input type="number" id="editfemales" name="females" value="<%= userdata.females %>">
-                    <label for="editchildrens">No of childrens:</label>
+                    <label for="editchildrens">No of children:</label>
                     <input type="number" id="editchildrens" name="childrens" value="<%= userdata.childrens %>">
                     <label for="editaddress">Address:</label>
                     <input type="text" id="editaddress" name="address" value="<%= userdata.address %>">
