@@ -26,7 +26,10 @@ app.use(session({
     store: store
 }));
 
-mongoose.connect('mongodb://localhost:27017/hope')
+mongoose.connect('mongodb://localhost:27017/hope',{
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
     .then(() => {
         console.log("MongoDB connected!");
     })
