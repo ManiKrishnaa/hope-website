@@ -15,8 +15,8 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 const store = new mongodbsession({
-    uri: 'mongodb://localhost:27017/hope',
-    session: 'mysessions'
+    uri: 'mongodb+srv://manikrishna9970:manikrishna9970@nani.8rxselx.mongodb.net/?retryWrites=true&w=majority&appName=nani',
+    session: 'hopesessions'
 });
 
 app.use(session({
