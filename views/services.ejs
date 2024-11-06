@@ -4,9 +4,448 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        nav {
+            margin: 10px;
+            padding-left: 600px;
+        }
+
+        nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: white;
+            background-color: #523b30;
+            border: 2px solid #523b30;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        nav a:hover {
+            background-color: #523b30;
+            border-color: #523b30;
+        }
+
+        .content-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .content {
+            display: none;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        .active {
+            display: block;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        /* Table header styles */
+        th {
+            background-color: #6f5045;
+            color: white;
+            padding: 10px;
+        }
+
+        /* Table cell styles */
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        /* Alternate row background color */
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Button inside table cell */
+        td button {
+            padding: 8px 16px;
+            background-color: #6f5045;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Button hover effect */
+        td button:hover {
+            background-color: #523b30;
+        }
+
+        .overlay {
+            position: absolute;
+            padding-left: 550px;
+            padding-top: 200px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); 
+            z-index: 1000; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .overlay-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #888;
+        }
+
+        .close-btn:hover {
+            color: #000;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        form input[type="text"],
+        form input[type="number"],
+        form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button[type="submit"] {
+            background-color: #6f5045;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #6f5045;
+        }
+
+                /* Slider container */
+        .image-slider {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 50px auto;
+            overflow: hidden;
+        }
+
+        /* The slides */
+        .slider-container {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        /* Image styles */
+        .slider-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Navigation buttons */
+        button.prev, button.next {
+            position: absolute;
+            top: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 1000;
+            transform: translateY(-50%);
+        }
+
+        button.prev {
+            left: 10px;
+        }
+
+        button.next {
+            right: 10px;
+        }
+
+        button.prev:hover, button.next:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+
+    </style>
 </head>
 <body>
+    
     <%- include('navbar') %>
-    <h1>services page</h1>
+    <div class="image-slider">
+        <div class="slider-container">
+            <img src="images/donations1.jpg" alt="Image 1" class="slider-image">
+            <img src="images/donations2.jpg" alt="Image 2" class="slider-image">
+        </div>
+        <button class="prev" onclick="changeSlide(-1)">&#10094;</button>
+        <button class="next" onclick="changeSlide(1)">&#10095;</button>
+    </div>
+<% if(isLoggedin) { %>
+    <nav>
+        <a href="/needydonate" id="needyItemsBtn">Needy Items</a>
+        <a href="/moneydonation" id="moneyDonationBtn">Money Donation</a>
+    </nav>
+
+    <div class="content-container">
+        <div id="needyItemsContent" class="content">
+            <% if (needyitems && needyitems.length > 0) { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Needy Item Name</th>
+                            <th>Organization Name</th>
+                            <th>Strength</th>
+                            <th>Address</th>
+                            <th>Donate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% needyitems.forEach(function(item) { %>
+                            <tr>
+                                <td><%= item.itemname %></td>
+                                <td><%= item.orgDetails ? item.orgDetails.name : 'N/A' %></td>
+                                <td><%= item.orgDetails ? item.orgDetails.strength : 'N/A' %></td>
+                                <td><%= item.orgDetails ? item.orgDetails.address : 'N/A' %></td>
+                                <td><button onclick="donate('<%= item.itemname %>', '<%= item.orgDetails.username %>')">Donate</button></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p>No needy items available</p>
+            <% } %>
+        </div>
+
+        <div id="moneyDonationContent" class="content">
+            <% if (orgdetails && orgdetails.length > 0) { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Organization Name</th>
+                            <th>Strength</th>
+                            <th>Address</th>
+                            <th>Donate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orgdetails.forEach(function(org) { %>
+                            <tr>
+                                <td><%= org.name %></td>
+                                <td><%= org.strength%></td>
+                                <td><%= org.address %></td>
+                                <td><button onclick="donateMoney('<%= org.username %>')">Donate</button></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p>No needy items available</p>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Overlay for needy donation information -->
+    <div class="overlay" id="overlay" style="display: none;">
+        <div class="overlay-content">
+            <span class="close-btn" onclick="toggleOverlay()">&times;</span>
+            <h2>Enter Donation Information</h2>
+            <form action="/donate" method="POST" id="donationForm">
+                <div class="form-input">
+                    <input type="hidden" name="itemId" id="itemId" value="">
+                    <input type="hidden" name="orgUsername" id="orgUsernameField" value="">
+                    <label for="quantity">Quantity (in units) : </label>
+                    <input type="text" id="quantity" name="quantity" placeholder="Enter quantity" min="1" required>
+                </div>
+                <div class="form-input">
+                    <label for="pickup">Pickup Preference:</label>
+                    <select id="pickup" name="pickup" onchange="showAdditionalFields()" required>
+                        <option value="donor">Donor pickup</option>
+                        <option value="organization">Organization pickup</option>
+                    </select>
+                </div>
+                <div id="additionalFields" style="display: none;"></div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="overlay" id="moneyOverlay" style="display: none;">
+        <div class="overlay-content">
+            <span class="close-btn" onclick="toggleMoneyOverlay()">&times;</span>
+            <h2>Money Donation</h2>
+            <form action="/donate-money" method="POST" id="moneyDonationForm">
+                <div class="form-input">
+                    <input type="hidden" name="orgUsername" id="moneyOrgUsername" value="">
+                    <label for="moneyAmount">Amount: </label>
+                    <input type="number" id="moneyAmount" name="amount" placeholder="Enter amount" min="1" required>
+                </div>
+                <div id="moneyQrCode" style="display:none;"></div> 
+                <button type="button" onclick="generateMoneyQR()">Pay</button>
+            </form>
+        </div>
+    </div>
+
+    <% }else{ %>
+        <p style="text-align: center;"> Please Login first !</p>
+    <% } %>
+    <script>
+       let currentIndex = 0;
+
+        function changeSlide(direction) {
+            const images = document.querySelectorAll('.slider-image');
+            const totalImages = images.length;
+
+            currentIndex += direction;
+
+            if (currentIndex >= totalImages) {
+                currentIndex = 0;
+            }
+
+            if (currentIndex < 0) {
+                currentIndex = totalImages - 1;
+            }
+
+            const sliderContainer = document.querySelector('.slider-container');
+            sliderContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+
+        setInterval(function() {
+            changeSlide(1);
+        }, 5000); 
+
+
+        function toggleOverlay(itemId) {
+            var overlay = document.getElementById("overlay");
+            var itemIdField = document.getElementById("itemId");
+            itemIdField.value = itemId;
+            overlay.style.display = overlay.style.display === "block" ? "none" : "block";
+        }
+
+        function donate(itemId, orgUsername) {
+            document.getElementById("itemId").value = itemId;
+            console.log(orgUsername);
+            document.getElementById("orgUsernameField").value = orgUsername;
+            toggleOverlay(itemId);
+        }
+
+        function donatemoney(orgusername){
+            document.getElementById('moneyOrgUsername').value = orgusername;
+            console.log(orgusername);
+        }
+
+        function showAdditionalFields() {
+            var pickup = document.getElementById("pickup").value;
+            var additionalFields = document.getElementById("additionalFields");
+
+            if (pickup === "organization") {
+                additionalFields.innerHTML = `
+                    <div class="form-input">
+                        <label for="pickupAddress">Pickup Address:</label>
+                        <input type="text" id="pickupAddress" name="pickupAddress" placeholder="Enter pickup address" required>
+                    </div>
+                `;
+                additionalFields.style.display = "block";
+            } else {
+                additionalFields.innerHTML = "";
+                additionalFields.style.display = "none";
+            }
+        }
+
+        document.getElementById("needyItemsBtn").addEventListener("click", function(event) {
+            event.preventDefault(); // Prevent the default action of the anchor tag
+            document.getElementById("needyItemsContent").classList.add("active");
+            document.getElementById("moneyDonationContent").classList.remove("active");
+        });
+    
+        document.getElementById("moneyDonationBtn").addEventListener("click", function(event) {
+            event.preventDefault(); // Prevent the default action of the anchor tag
+            document.getElementById("moneyDonationContent").classList.add("active");
+            document.getElementById("needyItemsContent").classList.remove("active");
+        });
+
+        function toggleMoneyOverlay(orgUsername) {
+            var overlay = document.getElementById("moneyOverlay");
+            var orgUsernameField = document.getElementById("moneyOrgUsername");
+            orgUsernameField.value = orgUsername;
+            overlay.style.display = overlay.style.display === "block" ? "none" : "block";
+        }
+
+        function donateMoney(orgUsername) {
+            toggleMoneyOverlay(orgUsername);
+        }
+
+        function generateMoneyQR() {
+        var amount = document.getElementById("moneyAmount").value;
+        var orgUsername = document.getElementById("moneyOrgUsername").value;
+
+        if (amount > 0) {
+            var qrCodeDiv = document.getElementById("moneyQrCode");
+            qrCodeDiv.innerHTML = ""; // Clear previous QR code, if any
+
+            // Assuming you have a backend route to generate QR code and process payment
+            fetch(`/generate-money-qr?amount=${amount}&orgUsername=${orgUsername}`)
+                .then(response => response.text())
+                .then(qrCode => {
+                    qrCodeDiv.innerHTML = qrCode; 
+                    qrCodeDiv.style.display = "block";
+                    fetch('/donate-money', {
+                        method: 'POST',
+                        body: new FormData(document.getElementById('moneyDonationForm')),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(`Transaction ID: ${data.transactionId}\nAmount: ${data.amount}`);
+                        } else {
+                            alert('Failed to donate. Please try again.');
+                        }
+                    })
+                    .catch(error => console.error('Error processing donation:', error));
+                })
+                .catch(error => console.error('Error generating QR code:', error));
+        } else {
+            alert("Please enter a valid amount.");
+        }
+    }
+    </script>
 </body>
 </html>
